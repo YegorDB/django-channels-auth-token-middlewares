@@ -1,6 +1,10 @@
+import re
+
+from django.apps import apps
 from django.utils.functional import empty
 
 from channels.auth import AuthMiddleware, UserLazyObject
+from channels.db import database_sync_to_async
 
 
 class BaseAuthTokenMiddleware(AuthMiddleware):
@@ -48,3 +52,32 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
         raise NotImplementedError(
             "subclasses of BaseAuthTokenMiddleware "
             "must provide a get_user_instance(token_key) method")
+
+
+class DRFAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Django REST framework auth token middleware."""
+
+    keyword = "Token"
+    token_regex = "[0-9a-f]{{40}}"
+
+    def __init__(self, *args, keyword=None, token_regex=None, **kwargs):
+        self.keyword = keyword or self.keyword
+        self.token_regex = token_regex or self.token_regex
+        super().__init__(*args, **kwargs)
+
+    def parse_token_key(self, scope):
+        headers = dict(scope["headers"])
+        key = headers.get(b"authorization", b"").decode()
+        matched = re.fullmatch(rf"{self.keyword} ({self.token_regex})", key)
+        if not matched:
+            return None
+        return matched.group(1)
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        Token = apps.get_model("authtoken", "Token")
+        try:
+            token = Token.objects.select_related("user").get(key=token_key)
+        except Token.DoesNotExist:
+            return None
+        return token.user
