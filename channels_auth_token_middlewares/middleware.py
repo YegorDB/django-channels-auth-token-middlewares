@@ -54,24 +54,60 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
             "must provide a get_user_instance(token_key) method")
 
 
-class DRFAuthTokenMiddleware(BaseAuthTokenMiddleware):
-    """Django REST framework auth token middleware."""
+class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Base middleware which parses token key from request header."""
 
-    keyword = "Token"
-    token_regex = "[0-9a-f]{{40}}"
+    header_name = None
+    keyword = None
+    token_regex = ".*"
 
-    def __init__(self, *args, keyword=None, token_regex=None, **kwargs):
+    def __init__(
+            self, *args, header_name=None,
+            keyword=None, token_regex=None, **kwargs):
+
+        self.header_name = header_name or self.header_name
         self.keyword = keyword or self.keyword
         self.token_regex = token_regex or self.token_regex
+
+        self._validate_attributes()
+
+        self.header_name = self.header_name.lower().encode()
+
         super().__init__(*args, **kwargs)
 
     def parse_token_key(self, scope):
         headers = dict(scope["headers"])
-        key = headers.get(b"authorization", b"").decode()
+        key = headers.get(self.header_name, b"").decode()
         matched = re.fullmatch(rf"{self.keyword} ({self.token_regex})", key)
         if not matched:
             return None
         return matched.group(1)
+
+    def _validate_attributes(self):
+        if not self.header_name:
+            raise NotImplementedError(
+                "subclasses of HeaderAuthTokenMiddleware "
+                "must provide a header_name attribute")
+        if not isinstance(self.header_name, str):
+            raise TypeError("header_name attribute has to be a string")
+
+        if not self.keyword:
+            raise NotImplementedError(
+                "subclasses of HeaderAuthTokenMiddleware "
+                "must provide a keyword attribute")
+        if not isinstance(self.header_name, str):
+            raise TypeError("keyword attribute has to be a string")
+
+        if not isinstance(self.token_regex, str):
+            raise TypeError("token_regex attribute has to be a string")
+
+
+class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
+    """Django REST framework auth token middleware."""
+
+    header_name = "Authorization"
+    keyword = "Token"
+    token_regex = "[0-9a-f]{40}"
 
     @database_sync_to_async
     def get_user_instance(self, token_key):
