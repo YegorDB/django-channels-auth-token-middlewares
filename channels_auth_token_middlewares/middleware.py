@@ -1,5 +1,7 @@
 import re
 
+from urllib.parse import parse_qs
+
 from django.apps import apps
 from django.utils.functional import empty
 
@@ -12,6 +14,12 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
     Base middleware which populates scope["user"] by authorization token key.
     Could be used behind other auth middlewares like AuthMiddleware.
     """
+
+    token_regex = ".*"
+
+    def __init__(self, *args, token_regex=None, **kwargs):
+        self.token_regex = str(token_regex or self.token_regex)
+        super().__init__(*args, **kwargs)
 
     def populate_scope(self, scope):
         # Add it to the scope if it is not there already
@@ -59,47 +67,23 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     header_name = None
     keyword = None
-    token_regex = ".*"
 
-    def __init__(
-            self, *args, header_name=None,
-            keyword=None, token_regex=None, **kwargs):
-
-        self.header_name = header_name or self.header_name
-        self.keyword = keyword or self.keyword
-        self.token_regex = token_regex or self.token_regex
-
-        self._validate_attributes()
-
+    def __init__(self, *args, header_name=None, keyword=None, **kwargs):
+        self.header_name = str(header_name or self.header_name)
         self.header_name = self.header_name.lower().encode()
+
+        self.keyword = str(keyword or self.keyword)
 
         super().__init__(*args, **kwargs)
 
     def parse_token_key(self, scope):
         headers = dict(scope["headers"])
         key = headers.get(self.header_name, b"").decode()
+
         matched = re.fullmatch(rf"{self.keyword} ({self.token_regex})", key)
         if not matched:
             return None
         return matched.group(1)
-
-    def _validate_attributes(self):
-        if not self.header_name:
-            raise NotImplementedError(
-                "subclasses of HeaderAuthTokenMiddleware "
-                "must provide a header_name attribute")
-        if not isinstance(self.header_name, str):
-            raise TypeError("header_name attribute has to be a string")
-
-        if not self.keyword:
-            raise NotImplementedError(
-                "subclasses of HeaderAuthTokenMiddleware "
-                "must provide a keyword attribute")
-        if not isinstance(self.header_name, str):
-            raise TypeError("keyword attribute has to be a string")
-
-        if not isinstance(self.token_regex, str):
-            raise TypeError("token_regex attribute has to be a string")
 
 
 class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
@@ -117,3 +101,24 @@ class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
         except Token.DoesNotExist:
             return None
         return token.user
+
+
+class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Base middleware which parses token key from request query string."""
+
+    query_param = None
+
+    def __init__(self, *args, query_param=None, **kwargs):
+        self.query_param = str(query_param or self.query_param)
+
+        super().__init__(*args, **kwargs)
+
+    def parse_token_key(self, scope):
+        raw_query_params = scope["query_string"].decode()
+        query_params = parse_qs(raw_query_params)
+        key = query_params.get(self.query_param, [""])[0]
+
+        matched = re.fullmatch(rf"({self.token_regex})", key)
+        if not matched:
+            return None
+        return matched.group(1)
