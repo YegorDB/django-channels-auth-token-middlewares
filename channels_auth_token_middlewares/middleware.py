@@ -86,23 +86,6 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
         return matched.group(1)
 
 
-class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
-    """Django REST framework auth token middleware."""
-
-    header_name = "Authorization"
-    keyword = "Token"
-    token_regex = "[0-9a-f]{40}"
-
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        Token = apps.get_model("authtoken", "Token")
-        try:
-            token = Token.objects.select_related("user").get(key=token_key)
-        except Token.DoesNotExist:
-            return None
-        return token.user
-
-
 class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
     """Base middleware which parses token key from request query string."""
 
@@ -122,3 +105,41 @@ class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
         if not matched:
             return None
         return matched.group(1)
+
+
+class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
+    """Django REST framework auth token middleware."""
+
+    header_name = "Authorization"
+    keyword = "Token"
+    token_regex = "[0-9a-f]{40}"
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        Token = apps.get_model("authtoken", "Token")
+        try:
+            token = Token.objects.select_related("user").get(key=token_key)
+        except Token.DoesNotExist:
+            return None
+        return token.user
+
+
+class JWTAuthTokenMiddleware(HeaderAuthTokenMiddleware):
+    """Simple JWT auth token middleware."""
+
+    header_name = "Authorization"
+    keyword = "Bearer"
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        from rest_framework_simplejwt.authentication import JWTAuthentication
+        from rest_framework_simplejwt.exceptions import (
+            AuthenticationFailed, InvalidToken, TokenError
+        )
+
+        auth = JWTAuthentication()
+        try:
+            validated_token = auth.get_validated_token(token_key)
+            return auth.get_user(validated_token)
+        except (AuthenticationFailed, InvalidToken, TokenError):
+            return None
