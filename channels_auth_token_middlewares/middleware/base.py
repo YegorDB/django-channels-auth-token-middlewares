@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import empty
 
 from channels.auth import AuthMiddleware, UserLazyObject
@@ -28,10 +29,6 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
             scope["user"]._wrapped = await self.get_user(scope)
 
     async def get_user(self, scope):
-        # postpone model import to avoid ImproperlyConfigured error before
-        # Django setup is complete.
-        from django.contrib.auth.models import AnonymousUser
-
         token_key = self.parse_token_key(scope)
         if not token_key:
             return AnonymousUser()
