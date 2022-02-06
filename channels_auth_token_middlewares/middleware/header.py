@@ -1,5 +1,3 @@
-import re
-
 from .base import BaseAuthTokenMiddleware
 
 
@@ -17,11 +15,10 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
         super().__init__(*args, **kwargs)
 
-    def parse_token_key(self, scope):
+    def get_token_key_string(self, scope):
         headers = dict(scope["headers"])
-        key = headers.get(self.header_name, b"").decode()
+        return headers.get(self.header_name, b"").decode()
 
-        matched = re.fullmatch(rf"{self.keyword} ({self.token_regex})", key)
-        if not matched:
-            return None
-        return matched.group(1)
+    @property
+    def token_key_string_regex(self):
+        return rf"{self.keyword} ({self.token_regex})"

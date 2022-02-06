@@ -1,5 +1,3 @@
-import re
-
 from urllib.parse import parse_qs
 
 from .base import BaseAuthTokenMiddleware
@@ -15,12 +13,7 @@ class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
         super().__init__(*args, **kwargs)
 
-    def parse_token_key(self, scope):
+    def get_token_key_string(self, scope):
         raw_query_params = scope["query_string"].decode()
         query_params = parse_qs(raw_query_params)
-        key = query_params.get(self.query_param, [""])[0]
-
-        matched = re.fullmatch(rf"({self.token_regex})", key)
-        if not matched:
-            return None
-        return matched.group(1)
+        return query_params.get(self.query_param, [""])[0]

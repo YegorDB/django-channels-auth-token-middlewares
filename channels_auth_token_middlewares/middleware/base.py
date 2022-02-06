@@ -29,21 +29,33 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
             scope["user"]._wrapped = await self.get_user(scope)
 
     async def get_user(self, scope):
-        token_key = self.parse_token_key(scope)
+        token_key_string = self.get_token_key_string(scope)
+        token_key = self.parse_token_key(token_key_string)
         if not token_key:
             return AnonymousUser()
 
         user = await self.get_user_instance(token_key)
         return user or AnonymousUser()
 
-    def parse_token_key(self, scope):
+    def get_token_key_string(self, scope):
         """
-        Must be implemented by subclasses to parse token key from the scope.
-        Implementation need to returns token key or None.
+        Must be implemented by subclasses
+        to get token key string from the scope.
+        Implementation need to returns string to parse token key from.
         """
         raise NotImplementedError(
             "subclasses of BaseAuthTokenMiddleware "
-            "must provide a parse_token_key(scope) method")
+            "must provide a get_token_key_string(scope) method")
+
+    def parse_token_key(self, token_key_string):
+        matched = re.fullmatch(self.token_key_string_regex, token_key_string)
+        if not matched:
+            return None
+        return matched.group(1)
+
+    @property
+    def token_key_string_regex(self):
+        return rf"({self.token_regex})"
 
     async def get_user_instance(self, token_key):
         """
