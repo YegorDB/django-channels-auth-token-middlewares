@@ -1,5 +1,8 @@
 import re
 
+from http.cookies import BaseCookie
+from urllib.parse import parse_qs
+
 from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import empty
 
@@ -65,3 +68,60 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
         raise NotImplementedError(
             "subclasses of BaseAuthTokenMiddleware "
             "must provide a get_user_instance(token_key) method")
+
+
+class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Base middleware which parses token key from request header."""
+
+    header_name = None
+    keyword = None
+
+    def __init__(self, *args, header_name=None, keyword=None, **kwargs):
+        self.header_name = str(header_name or self.header_name)
+        self.header_name = self.header_name.lower().encode()
+
+        self.keyword = str(keyword or self.keyword)
+
+        super().__init__(*args, **kwargs)
+
+    def get_token_key_string(self, scope):
+        headers = dict(scope["headers"])
+        return headers.get(self.header_name, b"").decode()
+
+    @property
+    def token_key_string_regex(self):
+        return rf"{self.keyword} ({self.token_regex})"
+
+
+class CookieAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Base middleware which parses token key from request cookie."""
+
+    cookie_name = None
+
+    def __init__(self, *args, cookie_name=None, **kwargs):
+        self.cookie_name = str(cookie_name or self.cookie_name)
+
+        super().__init__(*args, **kwargs)
+
+    def get_token_key_string(self, scope):
+        headers = dict(scope["headers"])
+        cookie_raw_data = headers.get(b"cookie", b"").decode()
+        cookie = BaseCookie()
+        cookie.load(cookie_raw_data)
+        return cookie.get(self.cookie_name, "")
+
+
+class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """Base middleware which parses token key from request query string."""
+
+    query_param = None
+
+    def __init__(self, *args, query_param=None, **kwargs):
+        self.query_param = str(query_param or self.query_param)
+
+        super().__init__(*args, **kwargs)
+
+    def get_token_key_string(self, scope):
+        raw_query_params = scope["query_string"].decode()
+        query_params = parse_qs(raw_query_params)
+        return query_params.get(self.query_param, [""])[0]
