@@ -33,6 +33,9 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
 
     async def get_user(self, scope):
         token_key_string = self.get_token_key_string(scope)
+        if not token_key_string:
+            return AnonymousUser()
+
         token_key = self.parse_token_key(token_key_string)
         if not token_key:
             return AnonymousUser()
@@ -42,9 +45,9 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
 
     def get_token_key_string(self, scope):
         """
-        Must be implemented by subclasses
+        Must be implemented by subclass
         to get token key string from the scope.
-        Implementation need to returns string to parse token key from.
+        Implementation need to returns string to parse token key from or None.
         """
         raise NotImplementedError(
             "subclasses of BaseAuthTokenMiddleware "
@@ -62,7 +65,7 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
 
     async def get_user_instance(self, token_key):
         """
-        Must be implemented by subclasses to get user instance by token key.
+        Must be implemented by subclass to get user instance by token key.
         Implementation need to returns user instance or None.
         """
         raise NotImplementedError(
@@ -86,7 +89,10 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     def get_token_key_string(self, scope):
         headers = dict(scope["headers"])
-        return headers.get(self.header_name, b"").decode()
+        value = headers.get(self.header_name)
+        if not value:
+            return None
+        return value.decode()
 
     @property
     def token_key_string_regex(self):
@@ -108,7 +114,10 @@ class CookieAuthTokenMiddleware(BaseAuthTokenMiddleware):
         cookie_raw_data = headers.get(b"cookie", b"").decode()
         cookie = BaseCookie()
         cookie.load(cookie_raw_data)
-        return cookie.get(self.cookie_name, "")
+        cookie_item = cookie.get(self.cookie_name)
+        if not cookie_item:
+            return None
+        return cookie_item.value
 
 
 class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
@@ -124,4 +133,7 @@ class QueryStringAuthTokenMiddleware(BaseAuthTokenMiddleware):
     def get_token_key_string(self, scope):
         raw_query_params = scope["query_string"].decode()
         query_params = parse_qs(raw_query_params)
-        return query_params.get(self.query_param, [""])[0]
+        query_param = query_params.get(self.query_param)
+        if not query_param:
+            return None
+        return query_param[0]

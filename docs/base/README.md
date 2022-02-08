@@ -12,9 +12,7 @@
 - token_regex - token key validation regex, by default any string (".*")
 
 
-### BaseAuthTokenMiddleware.get_user(scope):
-> Async method.
-
+### async BaseAuthTokenMiddleware.get_user(scope):
 > Returns user model instance or anonymous user instance.
 
 - scope - channels.auth.AuthMiddleware scope
@@ -23,3 +21,33 @@
 1. Get token key string from the scope.
 2. Parse token key from token key string.
 3. Get user instance by token key.
+
+
+### async BaseAuthTokenMiddleware.get_token_key_string(scope):
+> Must be implemented by subclass to get token key string from the scope.
+
+> Implementation need to returns string to parse token key from or None.
+
+- scope - channels.auth.AuthMiddleware scope
+
+
+### BaseAuthTokenMiddleware.parse_token_key(token_key_string):
+> Parse token key from token key string by token key string regex.
+
+> Returns token key as string or None.
+
+- token_key_string - string to parse token key from
+
+
+### property BaseAuthTokenMiddleware.token_key_string_regex():
+> Returns regex to parse token key from token key string.
+
+> Default is rf"({self.token_regex})"
+
+
+### async BaseAuthTokenMiddleware.get_user_instance(token_key):
+> Must be implemented by subclasses to get user instance by token key.
+
+> Implementation need to returns user instance or None.
+
+- token_key - token key as string
