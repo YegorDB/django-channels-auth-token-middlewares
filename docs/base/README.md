@@ -64,7 +64,7 @@
 - keyword - token key string keyword
 
 
-### async BaseAuthTokenMiddleware.get_token_key_string(scope)
+### async HeaderAuthTokenMiddleware.get_token_key_string(scope)
 > Get token key string from header by header name.
 
 > Returns string to parse token key from or None.
@@ -72,13 +72,39 @@
 - scope - channels.auth.AuthMiddleware scope
 
 
-### property BaseAuthTokenMiddleware.token_key_string_regex()
+### property HeaderAuthTokenMiddleware.token_key_string_regex()
 > Returns regex to parse token key from token key string.
 
 > Default is rf"{self.keyword} ({self.token_regex})"
 
 
-### async BaseAuthTokenMiddleware.get_user_instance(token_key)
+### async HeaderAuthTokenMiddleware.get_user_instance(token_key)
+> Must be implemented by subclasses to get user instance by token key.
+
+> Implementation need to returns user instance or None.
+
+- token_key - token key as string
+
+
+## CookieAuthTokenMiddleware(inner, token_regex=None, cookie_name=None)
+> Base middleware which parses auth token key from request header.
+
+> Subclass of BaseAuthTokenMiddleware.
+
+- inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
+- token_regex - token key validation regex, by default any string (".*")
+- cookie_name - name of a cookie to get token key string from
+
+
+### async CookieAuthTokenMiddleware.get_token_key_string(scope)
+> Get token key string from cookie by cookie name.
+
+> Returns string to parse token key from or None.
+
+- scope - channels.auth.AuthMiddleware scope
+
+
+### async CookieAuthTokenMiddleware.get_user_instance(token_key)
 > Must be implemented by subclasses to get user instance by token key.
 
 > Implementation need to returns user instance or None.
