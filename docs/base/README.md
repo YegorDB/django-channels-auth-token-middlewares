@@ -87,7 +87,7 @@
 
 
 ## CookieAuthTokenMiddleware(inner, token_regex=None, cookie_name=None)
-> Base middleware which parses auth token key from request header.
+> Base middleware which parses token key from request cookie.
 
 > Subclass of BaseAuthTokenMiddleware.
 
@@ -105,6 +105,32 @@
 
 
 ### async CookieAuthTokenMiddleware.get_user_instance(token_key)
+> Must be implemented by subclasses to get user instance by token key.
+
+> Implementation need to returns user instance or None.
+
+- token_key - token key as string
+
+
+## QueryStringAuthTokenMiddleware(inner, token_regex=None, query_param=None)
+> Base middleware which parses token key from request query string.
+
+> Subclass of BaseAuthTokenMiddleware.
+
+- inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
+- token_regex - token key validation regex, by default any string (".*")
+- query_param - name of a query param to get token key string from
+
+
+### async QueryStringAuthTokenMiddleware.get_token_key_string(scope)
+> Get token key string from query params by query param name.
+
+> Returns string to parse token key from or None.
+
+- scope - channels.auth.AuthMiddleware scope
+
+
+### async QueryStringAuthTokenMiddleware.get_user_instance(token_key)
 > Must be implemented by subclasses to get user instance by token key.
 
 > Implementation need to returns user instance or None.
