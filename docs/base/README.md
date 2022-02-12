@@ -53,7 +53,7 @@
 - token_key - token key as string
 
 
-## HeaderAuthTokenMiddleware(inner, token_regex=None, header_name=None, keyword=None)
+## HeaderAuthTokenMiddleware(inner, token_regex=".*", header_name=None, keyword=None)
 > Base middleware which parses auth token key from request header.
 
 > Subclass of BaseAuthTokenMiddleware.
