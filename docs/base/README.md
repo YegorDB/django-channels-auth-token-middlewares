@@ -1,4 +1,4 @@
-# Base Django Channels auth token middlewares documentation
+# Base middlewares
 
 
 ## BaseAuthTokenMiddleware(inner, token_regex=None)
