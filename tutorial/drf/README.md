@@ -1,9 +1,12 @@
 # Django REST framework middlewares tutorial
 
+- [DRFAuthTokenMiddleware](#drfauthtokenmiddleware)
+- [SimpleJWTAuthTokenMiddleware](#simplejwtauthtokenmiddleware)
 
-## DRFAuthTokenMiddleware
 
-### Usage example
+### DRFAuthTokenMiddleware
+
+#### Usage example
 
 > DRFAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
 
@@ -44,7 +47,7 @@ application = ProtocolTypeRouter({
 })
 ```
 
-### Override token keyword
+#### Override token keyword
 
 Override by init argument
 
@@ -87,6 +90,50 @@ application = ProtocolTypeRouter({
             # app paths
         ]),
     ),
+
+})
+```
+
+
+### SimpleJWTAuthTokenMiddleware
+
+#### Usage example
+
+> SimpleJWTAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
+
+Direct usage
+
+```python
+from channels.routing import ProtocolTypeRouter, URLRouter
+
+from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
+
+application = ProtocolTypeRouter({
+
+    "websocket": SimpleJWTAuthTokenMiddleware(
+        URLRouter([
+            # app paths
+        ]),
+    ),
+
+})
+```
+
+With AuthMiddlewareStack
+
+```python
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+
+from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
+
+application = ProtocolTypeRouter({
+
+    "websocket": AuthMiddlewareStack(SimpleJWTAuthTokenMiddleware(
+        URLRouter([
+            # app paths
+        ]),
+    )),
 
 })
 ```
