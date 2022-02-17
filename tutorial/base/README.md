@@ -12,6 +12,32 @@
 3. Get user instance by token key.
 
 #### Stages methods
-1. "get_token_key_string(scope)" asynch method.
+1. "get_token_key_string(scope)" async method.
 2. "parse_token_key(token_key_string)" method.
-3. "get_user_instance(token_key)" asynch method.
+3. "get_user_instance(token_key)" async method.
+
+
+## HeaderAuthTokenMiddleware inheritance
+
+### Required overrides
+
+> To inherit HeaderAuthTokenMiddleware you need to override "get_user_instance(token_key)" async method
+
+```python
+from django.contrib.auth import get_user_model
+
+from channels.db import database_sync_to_async
+
+from channels_auth_token_middlewares import HeaderAuthTokenMiddleware
+
+
+class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+```

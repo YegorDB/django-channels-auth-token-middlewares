@@ -17,6 +17,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 
 from channels_auth_token_middlewares import DRFAuthTokenMiddleware
 
+
 application = ProtocolTypeRouter({
 
     "websocket": DRFAuthTokenMiddleware(
@@ -35,6 +36,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 
 from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+
 
 application = ProtocolTypeRouter({
 
@@ -55,6 +57,7 @@ Override by init argument
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+
 
 application = ProtocolTypeRouter({
 
@@ -108,6 +111,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 
 from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
 
+
 application = ProtocolTypeRouter({
 
     "websocket": SimpleJWTAuthTokenMiddleware(
@@ -126,6 +130,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 
 from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
+
 
 application = ProtocolTypeRouter({
 
