@@ -15,6 +15,7 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
     Could be used behind other auth middlewares like AuthMiddleware.
     """
 
+    # regex need to fullmatch token key
     token_regex = ".*"
 
     def __init__(self, *args, token_regex=None, **kwargs):
@@ -61,6 +62,11 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
 
     @property
     def token_key_string_regex(self):
+        """
+        Regex to parse token key from token key string.
+        Token key need to be in first group.
+        """
+
         return rf"({self.token_regex})"
 
     async def get_user_instance(self, token_key):
@@ -96,6 +102,11 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     @property
     def token_key_string_regex(self):
+        """
+        Regex to parse token key from token key string.
+        Token key need to be in first group.
+        """
+
         return rf"{self.keyword} ({self.token_regex})"
 
 

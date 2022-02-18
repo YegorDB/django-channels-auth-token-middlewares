@@ -42,6 +42,8 @@
 ### property BaseAuthTokenMiddleware.token_key_string_regex()
 > Returns regex to parse token key from token key string.
 
+> Token key need to be in first group.
+
 > Default is rf"({self.token_regex})"
 
 

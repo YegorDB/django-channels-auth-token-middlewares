@@ -70,7 +70,7 @@ application = ProtocolTypeRouter({
 
 })
 
-# Now auth header looks like this
+# Header example
 # Authorization: CustomKeyword 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 ```
 
