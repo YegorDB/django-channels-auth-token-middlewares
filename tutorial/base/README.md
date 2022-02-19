@@ -7,17 +7,52 @@
 > There are 3 stages to get user instance by request scope
 
 #### Stages
-1. Get token key string from the scope.
-2. Parse token key from token key string.
-3. Get user instance by token key.
-
-#### Stages methods
-1. "get_token_key_string(scope)" async method.
-2. "parse_token_key(token_key_string)" method.
-3. "get_user_instance(token_key)" async method.
+1. Get token key string from request scope (get_token_key_string method).
+2. Parse token key from token key string (parse_token_key method), by default returns full token key string content.
+3. Get user instance by token key (get_user_instance async method).
 
 
-## HeaderAuthTokenMiddleware inheritance
+## BaseAuthTokenMiddleware
+
+### Required overrides
+
+> get_token_key_string and get_user_instance methods need to be overrided
+
+```python
+from django.contrib.auth import get_user_model
+
+from channels.db import database_sync_to_async
+
+from channels_auth_token_middlewares import HeaderAuthTokenMiddleware
+
+
+class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
+    """
+    Middleware which parse user id from "User-Id" request header.
+
+    Header example
+    User-Id: 4
+    User with id 4 or anonymous user would be populated to scope["user"].
+    """
+
+    def get_token_key_string(self, scope):
+        headers = dict(scope["headers"])
+        value = headers.get(b"user-id")
+        if not value:
+            return None
+        return value.decode()
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+```
+
+
+## HeaderAuthTokenMiddleware
 
 ### Required overrides
 

@@ -23,7 +23,7 @@
 3. Get user instance by token key.
 
 
-### async BaseAuthTokenMiddleware.get_token_key_string(scope)
+### BaseAuthTokenMiddleware.get_token_key_string(scope)
 > Must be implemented by subclass to get token key string from the scope.
 
 > Implementation need to returns string to parse token key from or None.
@@ -33,6 +33,8 @@
 
 ### BaseAuthTokenMiddleware.parse_token_key(token_key_string)
 > Parse token key from token key string by token key string regex.
+
+> By default returns full token key string content.
 
 > Returns token key as string or None.
 
@@ -66,7 +68,7 @@
 - keyword - token key string keyword
 
 
-### async HeaderAuthTokenMiddleware.get_token_key_string(scope)
+### HeaderAuthTokenMiddleware.get_token_key_string(scope)
 > Get token key string from header by header name.
 
 > Returns string to parse token key from or None.
@@ -98,7 +100,7 @@
 - cookie_name - name of a cookie to get token key string from
 
 
-### async CookieAuthTokenMiddleware.get_token_key_string(scope)
+### CookieAuthTokenMiddleware.get_token_key_string(scope)
 > Get token key string from cookie by cookie name.
 
 > Returns string to parse token key from or None.
@@ -124,7 +126,7 @@
 - query_param - name of a query param to get token key string from
 
 
-### async QueryStringAuthTokenMiddleware.get_token_key_string(scope)
+### QueryStringAuthTokenMiddleware.get_token_key_string(scope)
 > Get token key string from query params by query param name.
 
 > Returns string to parse token key from or None.
