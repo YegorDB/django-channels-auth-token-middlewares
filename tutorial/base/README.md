@@ -51,6 +51,38 @@ class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
             return None
 ```
 
+### Additional overrides
+
+> Token key is validated by token_regex
+
+> By defaul token_regex is any string (r".*")
+
+```python
+class CustomAuthTokenMiddleware2(CustomAuthTokenMiddleware):
+
+    # only ids from 1 to 9 would be handled
+    token_regex = r"[1-9]"
+```
+
+> token_key_string_regex is used to parse token key from token key string
+
+> By defaul token_key_string_regex includes only token key content (rf"({self.token_regex})")
+
+> Token key need to be in first group
+
+
+```python
+class CustomAuthTokenMiddleware3(CustomAuthTokenMiddleware2):
+    """
+    Header example
+    User-Id: foo 4 bar
+    """
+
+    @property
+    def token_key_string_regex(self):
+        return rf"foo ({self.token_regex}) bar"
+```
+
 
 ## HeaderAuthTokenMiddleware
 
@@ -87,33 +119,4 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
 
 ### Additional overrides
 
-```python
-class CustomHeaderAuthTokenMiddleware2(CustomHeaderAuthTokenMiddleware):
-    """
-    Header example
-    Custom-Header-Name: CustomKeyword 7
-    User with id 7 or anonymous user would be populated to scope["user"].
-
-    In this case only ids from 1 to 9 would be handled.
-    """
-
-    # regex need to fullmatch token key, by defaul any string (".*")
-    token_regex = "[1-9]"
-
-
-class CustomHeaderAuthTokenMiddleware3(CustomHeaderAuthTokenMiddleware2):
-    """
-    Header example
-    Custom-Header-Name: 2 CustomKeyword
-    User with id 2 or anonymous user would be populated to scope["user"].
-    """
-
-    @property
-    def token_key_string_regex(self):
-        """
-        Regex to parse token key from token key string.
-        Token key need to be in first group.
-        """
-
-        return rf"({self.token_regex}) {self.keyword}"
-```
+> Same as BaseAuthTokenMiddleware
