@@ -61,7 +61,7 @@ class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
 class CustomAuthTokenMiddleware2(CustomAuthTokenMiddleware):
 
     # only ids from 1 to 9 would be handled
-    token_regex = r"[1-9]"
+    token_regex = r"[1-9]" # may be passed as init kwarg
 ```
 
 > token_key_string_regex is used to parse token key from token key string
@@ -105,8 +105,45 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
     User with id 12 or anonymous user would be populated to scope["user"].
     """
 
-    header_name = "Custom-Header-Name"
-    keyword = "CustomKeyword"
+    header_name = "Custom-Header-Name" # may be passed as init kwarg
+    keyword = "CustomKeyword" # may be passed as init kwarg
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+```
+
+### Additional overrides
+
+> Same as BaseAuthTokenMiddleware
+
+
+## CookieAuthTokenMiddleware
+
+### Required overrides
+
+> To inherit CookieAuthTokenMiddleware you need to override "get_user_instance(token_key)" async method
+
+```python
+from django.contrib.auth import get_user_model
+
+from channels.db import database_sync_to_async
+
+from channels_auth_token_middlewares import CookieAuthTokenMiddleware
+
+
+class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
+    """
+    Cookie example
+    Custom-Cookie-Name: 26
+    User with id 26 or anonymous user would be populated to scope["user"].
+    """
+
+    cookie_name = "Custom-Cookie-Name" # may be passed as init kwarg
 
     @database_sync_to_async
     def get_user_instance(self, token_key):
