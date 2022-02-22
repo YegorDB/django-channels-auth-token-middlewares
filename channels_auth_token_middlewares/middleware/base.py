@@ -16,7 +16,7 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
     """
 
     # regex need to fullmatch token key
-    token_regex = ".*"
+    token_regex = r".*"
 
     def __init__(self, *args, token_regex=None, **kwargs):
         self.token_regex = str(token_regex or self.token_regex)

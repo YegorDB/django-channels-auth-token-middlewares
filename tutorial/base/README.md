@@ -1,5 +1,10 @@
 # Base classes inheritance
 
+- [BaseAuthTokenMiddleware](#baseauthtokenmiddleware)
+- [HeaderAuthTokenMiddleware](#headerauthtokenmiddleware)
+- [CookieAuthTokenMiddleware](#cookieauthtokenmiddleware)
+- [CustomQueryStringAuthTokenMiddleware](#customquerystringauthtokenmiddleware)
+
 
 ## Intro
 
@@ -13,6 +18,11 @@
 
 
 ## BaseAuthTokenMiddleware
+
+> Base middleware which populates scope["user"] by authorization token key.
+
+> Could be used behind other auth middlewares like AuthMiddleware.
+
 
 ### Required overrides
 
@@ -86,9 +96,11 @@ class CustomAuthTokenMiddleware3(CustomAuthTokenMiddleware2):
 
 ## HeaderAuthTokenMiddleware
 
+> Base middleware which parses token key from request header
+
 ### Required overrides
 
-> To inherit HeaderAuthTokenMiddleware you need to override "get_user_instance(token_key)" async method
+> get_user_instance method need to be overrided
 
 ```python
 from django.contrib.auth import get_user_model
@@ -101,12 +113,12 @@ from channels_auth_token_middlewares import HeaderAuthTokenMiddleware
 class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
     """
     Header example
-    Custom-Header-Name: CustomKeyword 12
-    User with id 12 or anonymous user would be populated to scope["user"].
+    User-Authorization: Id 4
+    User with id 4 or anonymous user would be populated to scope["user"].
     """
 
-    header_name = "Custom-Header-Name" # may be passed as init kwarg
-    keyword = "CustomKeyword" # may be passed as init kwarg
+    header_name = "User-Authorization" # may be passed as init kwarg
+    keyword = "Id" # may be passed as init kwarg
 
     @database_sync_to_async
     def get_user_instance(self, token_key):
@@ -124,9 +136,11 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
 
 ## CookieAuthTokenMiddleware
 
+> Base middleware which parses token key from request cookie
+
 ### Required overrides
 
-> To inherit CookieAuthTokenMiddleware you need to override "get_user_instance(token_key)" async method
+> get_user_instance method need to be overrided
 
 ```python
 from django.contrib.auth import get_user_model
@@ -139,11 +153,50 @@ from channels_auth_token_middlewares import CookieAuthTokenMiddleware
 class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
     """
     Cookie example
-    Custom-Cookie-Name: 26
-    User with id 26 or anonymous user would be populated to scope["user"].
+    user_id: 4
+    User with id 4 or anonymous user would be populated to scope["user"].
     """
 
-    cookie_name = "Custom-Cookie-Name" # may be passed as init kwarg
+    cookie_name = "user_id" # may be passed as init kwarg
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+```
+
+### Additional overrides
+
+> Same as BaseAuthTokenMiddleware
+
+
+## QueryStringAuthTokenMiddleware
+
+> Base middleware which parses token key from request query string
+
+### Required overrides
+
+> get_user_instance method need to be overrided
+
+```python
+from django.contrib.auth import get_user_model
+
+from channels.db import database_sync_to_async
+
+from channels_auth_token_middlewares import QueryStringAuthTokenMiddleware
+
+
+class CustomQueryStringAuthTokenMiddleware(QueryStringAuthTokenMiddleware):
+    """
+    Query string example
+    ?user_id=4
+    User with id 4 or anonymous user would be populated to scope["user"].
+    """
+
+    query_param = "user_id" # may be passed as init kwarg
 
     @database_sync_to_async
     def get_user_instance(self, token_key):

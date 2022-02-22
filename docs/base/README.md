@@ -9,7 +9,7 @@
 > Subclass of channels.auth.AuthMiddleware.
 
 - inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
-- token_regex - token key validation regex, by default any string (".*")
+- token_regex - token key validation regex, by default any string (r".*")
 
 
 ### async BaseAuthTokenMiddleware.get_user(scope)
@@ -57,13 +57,13 @@
 - token_key - token key as string
 
 
-## HeaderAuthTokenMiddleware(inner, token_regex=".*", header_name=None, keyword=None)
+## HeaderAuthTokenMiddleware(inner, token_regex=r".*", header_name=None, keyword=None)
 > Base middleware which parses auth token key from request header.
 
 > Subclass of BaseAuthTokenMiddleware.
 
 - inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
-- token_regex - token key validation regex, by default any string (".*")
+- token_regex - token key validation regex, by default any string (r".*")
 - header_name - name of a header to get token key string from
 - keyword - token key string keyword
 
@@ -96,7 +96,7 @@
 > Subclass of BaseAuthTokenMiddleware.
 
 - inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
-- token_regex - token key validation regex, by default any string (".*")
+- token_regex - token key validation regex, by default any string (r".*")
 - cookie_name - name of a cookie to get token key string from
 
 
@@ -122,7 +122,7 @@
 > Subclass of BaseAuthTokenMiddleware.
 
 - inner - ASGI application (like channels.auth.AuthMiddleware inner argument)
-- token_regex - token key validation regex, by default any string (".*")
+- token_regex - token key validation regex, by default any string (r".*")
 - query_param - name of a query param to get token key string from
 
 
