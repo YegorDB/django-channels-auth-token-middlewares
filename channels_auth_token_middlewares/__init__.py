@@ -18,5 +18,3 @@ from .middleware import (
     HeaderAuthTokenMiddleware, QueryStringAuthTokenMiddleware,
     DRFAuthTokenMiddleware, SimpleJWTAuthTokenMiddleware,
 )
-
-lol = 5
