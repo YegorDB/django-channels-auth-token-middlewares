@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  tests:
+    build:
+      context: ./tests
+    entrypoint: /bin/bash /app/entrypoint.sh
+    volumes:
+      - "./channels_auth_token_middlewares:/new_app/channels_auth_token_middlewares"
+      - "./README.md:/new_app/README.md"
+      - "./setup.py:/new_app/setup.py"
