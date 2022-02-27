@@ -15,7 +15,7 @@ Direct usage
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({
@@ -35,7 +35,7 @@ With AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 
-from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({
@@ -56,7 +56,7 @@ Override by init argument
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({
@@ -79,7 +79,7 @@ Override by subclass
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-from channels_auth_token_middlewares import DRFAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
 
 
 class CustomDRFAuthTokenMiddleware(DRFAuthTokenMiddleware):
@@ -109,7 +109,7 @@ Direct usage
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import SimpleJWTAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({
@@ -129,7 +129,7 @@ With AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 
-from channels_auth_token_middlewares import SimpleJWTAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import SimpleJWTAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({

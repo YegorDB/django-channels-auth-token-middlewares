@@ -33,7 +33,7 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares import HeaderAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import HeaderAuthTokenMiddleware
 
 
 class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
@@ -107,7 +107,7 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares import HeaderAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import HeaderAuthTokenMiddleware
 
 
 class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
@@ -147,7 +147,7 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares import CookieAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import CookieAuthTokenMiddleware
 
 
 class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
@@ -186,7 +186,7 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares import QueryStringAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import QueryStringAuthTokenMiddleware
 
 
 class CustomQueryStringAuthTokenMiddleware(QueryStringAuthTokenMiddleware):

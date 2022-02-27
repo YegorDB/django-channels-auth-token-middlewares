@@ -22,7 +22,7 @@ from django.apps import apps
 
 from channels.db import database_sync_to_async
 
-from .header import HeaderAuthTokenMiddleware
+from .base import HeaderAuthTokenMiddleware
 
 
 class DRFAuthTokenMiddleware(HeaderAuthTokenMiddleware):
