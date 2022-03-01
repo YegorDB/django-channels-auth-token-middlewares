@@ -33,7 +33,7 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares.middleware import HeaderAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import BaseAuthTokenMiddleware
 
 
 class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
