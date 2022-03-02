@@ -2,10 +2,22 @@ from django.contrib.auth import get_user_model
 
 from channels.db import database_sync_to_async
 
-from channels_auth_token_middlewares.middleware import BaseAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import (
+    BaseAuthTokenMiddleware, HeaderAuthTokenMiddleware,
+)
 
 
-class TestBaseAuthTokenMiddleware(BaseAuthTokenMiddleware):
+class UserGetterByIdMixin:
+
+    def get_user_by_id(self, user_id):
+        User = get_user_model()
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
+
+
+class TestBaseAuthTokenMiddleware(BaseAuthTokenMiddleware, UserGetterByIdMixin):
 
     def get_token_key_string(self, scope):
         headers = dict(scope["headers"])
@@ -16,8 +28,14 @@ class TestBaseAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     @database_sync_to_async
     def get_user_instance(self, token_key):
-        User = get_user_model()
-        try:
-            return User.objects.get(id=token_key)
-        except User.DoesNotExist:
-            return None
+        return self.get_user_by_id(token_key)
+
+
+class TestHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware, UserGetterByIdMixin):
+
+    header_name = "Test-Authorization"
+    keyword = "Id"
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        return self.get_user_by_id(token_key)
