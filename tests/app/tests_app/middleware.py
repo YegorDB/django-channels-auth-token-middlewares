@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 
 from channels_auth_token_middlewares.middleware import (
     BaseAuthTokenMiddleware, HeaderAuthTokenMiddleware,
+    CookieAuthTokenMiddleware,
 )
 
 
@@ -35,6 +36,15 @@ class TestHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware, UserGetterByIdMix
 
     header_name = "Test-Authorization"
     keyword = "Id"
+
+    @database_sync_to_async
+    def get_user_instance(self, token_key):
+        return self.get_user_by_id(token_key)
+
+
+class TestCookieAuthTokenMiddleware(CookieAuthTokenMiddleware, UserGetterByIdMixin):
+
+    cookie_name = "test"
 
     @database_sync_to_async
     def get_user_instance(self, token_key):
