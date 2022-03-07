@@ -50,3 +50,19 @@ class MiddlewaresTests(TestCase):
         user = updated_scope.get("user")
         assert user
         assert user.is_anonymous
+
+    async def test_cookie_auth_token_middleware(self):
+        app = TestCookieAuthTokenMiddleware(MockConsumer())
+
+        scope = {"headers": [(b"cookie", b"test=1")]}
+        updated_scope = await app(scope, None, None)
+        user = updated_scope.get("user")
+        assert user
+        assert not user.is_anonymous
+        assert user.id == 1
+
+        scope = {"headers": [(b"cookie", b"test=2")]}
+        updated_scope = await app(scope, None, None)
+        user = updated_scope.get("user")
+        assert user
+        assert user.is_anonymous
