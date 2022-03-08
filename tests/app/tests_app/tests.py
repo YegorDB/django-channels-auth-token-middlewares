@@ -3,7 +3,11 @@ from django.test import TestCase
 
 from rest_framework.authtoken.models import Token
 
-from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from channels_auth_token_middlewares.middleware import (
+    DRFAuthTokenMiddleware, SimpleJWTAuthTokenMiddleware,
+)
 
 from tests_app.consumer import MockConsumer
 from tests_app.middleware import (
@@ -21,6 +25,9 @@ class MiddlewaresTests(TestCase):
 
         token = Token.objects.create(user=user)
         cls._drf_token_key = token.key
+
+        refresh = RefreshToken.for_user(user)
+        cls._simplejwt_token_key = refresh.access_token
 
     @classmethod
     def tearDownClass(cls):
@@ -53,6 +60,12 @@ class MiddlewaresTests(TestCase):
     async def test_drf_auth_token_middleware(self):
         mdwr = DRFAuthTokenMiddleware(MockConsumer())
         success_scope = {"headers": [(b"authorization", f"Token {self._drf_token_key}".encode())]}
+        fail_scope = {"headers": [(b"authorization", b"Token wrong_token_key")]}
+        await self._test_middleware(mdwr, success_scope, fail_scope)
+
+    async def test_simplejwt_auth_token_middleware(self):
+        mdwr = SimpleJWTAuthTokenMiddleware(MockConsumer())
+        success_scope = {"headers": [(b"authorization", f"Bearer {self._simplejwt_token_key}".encode())]}
         fail_scope = {"headers": [(b"authorization", b"Token wrong_token_key")]}
         await self._test_middleware(mdwr, success_scope, fail_scope)
 
