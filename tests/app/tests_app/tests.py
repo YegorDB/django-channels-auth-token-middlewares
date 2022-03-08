@@ -1,6 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from rest_framework.authtoken.models import Token
+
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
+
 from tests_app.consumer import MockConsumer
 from tests_app.middleware import (
     TestBaseAuthTokenMiddleware, TestHeaderAuthTokenMiddleware,
@@ -13,7 +17,10 @@ class MiddlewaresTests(TestCase):
     @classmethod
     def setUpClass(cls):
         User = get_user_model()
-        User.objects.create_user("test", password="test", id=1)
+        user = User.objects.create_user("test", password="test", id=1)
+
+        token = Token.objects.create(user=user)
+        cls._drf_token_key = token.key
 
     @classmethod
     def tearDownClass(cls):
@@ -41,6 +48,12 @@ class MiddlewaresTests(TestCase):
         mdwr = TestQueryStringAuthTokenMiddleware(MockConsumer())
         success_scope = {"query_string": b"test=1"}
         fail_scope = {"query_string": b"test=2"}
+        await self._test_middleware(mdwr, success_scope, fail_scope)
+
+    async def test_drf_auth_token_middleware(self):
+        mdwr = DRFAuthTokenMiddleware(MockConsumer())
+        success_scope = {"headers": [(b"authorization", f"Token {self._drf_token_key}".encode())]}
+        fail_scope = {"headers": [(b"authorization", b"Token wrong_token_key")]}
         await self._test_middleware(mdwr, success_scope, fail_scope)
 
     async def _test_middleware(self, mdwr, success_scope, fail_scope):
