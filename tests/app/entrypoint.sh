@@ -2,6 +2,4 @@
 
 pip install -e /new_app/
 
-while true; do
-    sleep 60
-done
+python manage.py test

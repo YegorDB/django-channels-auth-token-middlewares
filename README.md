@@ -9,3 +9,18 @@
 
 ## Docs
 [Explore](docs)
+
+
+## Tests
+
+### Requirements
+- Docker>=19
+- docker-compose>=1.25
+
+### Usage
+
+#### Run
+`$ docker-compose -f docker-compose.tests.yml up`
+
+#### Clean
+`$ docker-compose -f docker-compose.tests.yml down`
