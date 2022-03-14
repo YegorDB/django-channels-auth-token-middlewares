@@ -9,8 +9,14 @@
 
 
 ## Install
-`$ pip install channels_auth_token_middlewares`
-
+1. `$ pip install channels-auth-token-middlewares`
+2. Add app name to `INSTALLED_APPS`
+```python
+INSTALLED_APPS = [
+    ...
+    'channels_auth_token_middlewares',
+]
+```
 
 ## Tutorial
 [Explore](tutorial)
