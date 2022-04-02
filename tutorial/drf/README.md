@@ -4,9 +4,11 @@
 - [SimpleJWTAuthTokenMiddleware](#simplejwtauthtokenmiddleware)
 
 
-### DRFAuthTokenMiddleware
+## DRFAuthTokenMiddleware
 
-#### Usage example
+> Django REST framework [token authentication](https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication) middleware
+
+### Usage example
 
 > DRFAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
 
@@ -49,7 +51,7 @@ application = ProtocolTypeRouter({
 })
 ```
 
-#### Override token keyword
+### Override token keyword
 
 Override by init argument
 
@@ -98,9 +100,11 @@ application = ProtocolTypeRouter({
 ```
 
 
-### SimpleJWTAuthTokenMiddleware
+## SimpleJWTAuthTokenMiddleware
 
-#### Usage example
+> [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/index.html) middleware
+
+### Usage example
 
 > SimpleJWTAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
 

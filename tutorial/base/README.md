@@ -3,7 +3,7 @@
 - [BaseAuthTokenMiddleware](#baseauthtokenmiddleware)
 - [HeaderAuthTokenMiddleware](#headerauthtokenmiddleware)
 - [CookieAuthTokenMiddleware](#cookieauthtokenmiddleware)
-- [CustomQueryStringAuthTokenMiddleware](#customquerystringauthtokenmiddleware)
+- [QueryStringAuthTokenMiddleware](#querystringauthtokenmiddleware)
 
 
 ## Intro
