@@ -1,4 +1,4 @@
-FROM python:3.10.2
+FROM python:3.10.4
 
 ADD ./requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && \

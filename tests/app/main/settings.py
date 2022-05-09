@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'oauth2_provider',
     'channels_auth_token_middlewares',
     'tests_app',
 ]
