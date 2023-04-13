@@ -93,6 +93,19 @@ class BaseAuthTokenMiddleware(AuthMiddleware):
             "subclasses of BaseAuthTokenMiddleware "
             "must provide a get_user_instance(token_key) method")
 
+    def get_scope_header_value(self, scope, header_name):
+        if isinstance(header_name, str):
+            header_name = header_name.encode()
+        elif not isinstance(header_name, bytes):
+            raise ValueError("Header name must be string or bytes")
+
+        headers = dict(scope["headers"])
+        value = headers.get(header_name, headers.get(header_name.lower()))
+
+        if not value:
+            return None
+        return value.decode()
+
 
 class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
     """Base middleware which parses token key from request header."""
@@ -102,18 +115,12 @@ class HeaderAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     def __init__(self, *args, header_name=None, keyword=None, **kwargs):
         self.header_name = str(header_name or self.header_name)
-        self.header_name = self.header_name.lower().encode()
-
         self.keyword = str(keyword or self.keyword)
 
         super().__init__(*args, **kwargs)
 
     def get_token_key_string(self, scope):
-        headers = dict(scope["headers"])
-        value = headers.get(self.header_name)
-        if not value:
-            return None
-        return value.decode()
+        return self.get_scope_header_value(scope, self.header_name)
 
     @property
     def token_key_string_regex(self):
@@ -136,8 +143,8 @@ class CookieAuthTokenMiddleware(BaseAuthTokenMiddleware):
         super().__init__(*args, **kwargs)
 
     def get_token_key_string(self, scope):
-        headers = dict(scope["headers"])
-        cookie_raw_data = headers.get(b"cookie", b"").decode()
+        header_name = "Cookie"
+        cookie_raw_data = self.get_scope_header_value(scope, header_name) or ''
         cookie = BaseCookie()
         cookie.load(cookie_raw_data)
         cookie_item = cookie.get(self.cookie_name)
