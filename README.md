@@ -13,8 +13,10 @@
 2. Add app name to `INSTALLED_APPS`
 ```python
 INSTALLED_APPS = [
-    ...
+    # base django apps (django.contrib.auth is required)
+    # other apps this one depends on (like rest_framework if it's necessary)
     'channels_auth_token_middlewares',
+    # custom apps
 ]
 ```
 
