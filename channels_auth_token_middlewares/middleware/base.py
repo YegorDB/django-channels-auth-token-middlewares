@@ -144,7 +144,7 @@ class CookieAuthTokenMiddleware(BaseAuthTokenMiddleware):
 
     def get_token_key_string(self, scope):
         header_name = "Cookie"
-        cookie_raw_data = self.get_scope_header_value(scope, header_name) or ''
+        cookie_raw_data = self.get_scope_header_value(scope, header_name) or ""
         cookie = BaseCookie()
         cookie.load(cookie_raw_data)
         cookie_item = cookie.get(self.cookie_name)
