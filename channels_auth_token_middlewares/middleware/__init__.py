@@ -17,4 +17,9 @@ from .base import (
     BaseAuthTokenMiddleware, CookieAuthTokenMiddleware,
     HeaderAuthTokenMiddleware, QueryStringAuthTokenMiddleware,
 )
-from .drf import DRFAuthTokenMiddleware, SimpleJWTAuthTokenMiddleware
+from .drf import (
+    DRFAuthTokenMiddleware, QueryStringDRFAuthTokenMiddleware,
+    DRFAuthTokenMiddlewareStack,
+    SimpleJWTAuthTokenMiddleware, QueryStringSimpleJWTAuthTokenMiddleware,
+    SimpleJWTAuthTokenMiddlewareStack,
+)
