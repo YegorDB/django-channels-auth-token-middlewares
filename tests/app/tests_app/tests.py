@@ -6,7 +6,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from channels_auth_token_middlewares.middleware import (
-    DRFAuthTokenMiddleware, SimpleJWTAuthTokenMiddleware,
+    DRFAuthTokenMiddleware, QueryStringDRFAuthTokenMiddleware,
+    SimpleJWTAuthTokenMiddleware, QueryStringSimpleJWTAuthTokenMiddleware,
 )
 
 from tests_app.consumer import MockConsumer
@@ -45,6 +46,12 @@ class MiddlewaresTests(TestCase):
         fail_scope = {"headers": [(b"test-authorization", b"Id 2")]}
         await self._test_middleware(mdwr, success_scope, fail_scope)
 
+    async def test_not_lower_header_auth_token_middleware(self):
+        mdwr = TestHeaderAuthTokenMiddleware(MockConsumer())
+        success_scope = {"headers": [(b"Test-Authorization", b"Id 1")]}
+        fail_scope = {"headers": [(b"Test-Authorization", b"Id 2")]}
+        await self._test_middleware(mdwr, success_scope, fail_scope)
+
     async def test_cookie_auth_token_middleware(self):
         mdwr = TestCookieAuthTokenMiddleware(MockConsumer())
         success_scope = {"headers": [(b"cookie", b"test=1")]}
@@ -59,14 +66,34 @@ class MiddlewaresTests(TestCase):
 
     async def test_drf_auth_token_middleware(self):
         mdwr = DRFAuthTokenMiddleware(MockConsumer())
-        success_scope = {"headers": [(b"authorization", f"Token {self._drf_token_key}".encode())]}
+        success_scope = {"headers": [
+            (b"authorization", f"Token {self._drf_token_key}".encode())
+        ]}
         fail_scope = {"headers": [(b"authorization", b"Token wrong_token_key")]}
+        await self._test_middleware(mdwr, success_scope, fail_scope)
+
+    async def test_query_string_drf_auth_token_middleware(self):
+        mdwr = QueryStringDRFAuthTokenMiddleware(MockConsumer())
+        success_scope = {
+            "query_string": f"authorization={self._drf_token_key}".encode()
+        }
+        fail_scope = {"query_string": b"authorization=wrong_token_key"}
         await self._test_middleware(mdwr, success_scope, fail_scope)
 
     async def test_simplejwt_auth_token_middleware(self):
         mdwr = SimpleJWTAuthTokenMiddleware(MockConsumer())
-        success_scope = {"headers": [(b"authorization", f"Bearer {self._simplejwt_token_key}".encode())]}
+        success_scope = {"headers": [
+            (b"authorization", f"Bearer {self._simplejwt_token_key}".encode())
+        ]}
         fail_scope = {"headers": [(b"authorization", b"Token wrong_token_key")]}
+        await self._test_middleware(mdwr, success_scope, fail_scope)
+
+    async def test_query_string_simplejwt_auth_token_middleware(self):
+        mdwr = QueryStringSimpleJWTAuthTokenMiddleware(MockConsumer())
+        success_scope = {
+            "query_string": f"authorization={self._simplejwt_token_key}".encode()
+        }
+        fail_scope = {"query_string": b"authorization=wrong_token_key"}
         await self._test_middleware(mdwr, success_scope, fail_scope)
 
     async def _test_middleware(self, mdwr, success_scope, fail_scope):
