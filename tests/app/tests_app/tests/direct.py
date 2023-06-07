@@ -67,10 +67,10 @@ class DirectMiddlewaresTests(BaseMiddlewaresTests):
     async def test_query_string_drf_auth_token_middleware(self):
         mdwr = QueryStringDRFAuthTokenMiddleware(MockConsumer())
         await self._test_middleware_success(mdwr, {
-            "query_string": f"authorization={self._drf_token_key}".encode()
+            "query_string": f"token={self._drf_token_key}".encode()
         })
         await self._test_middleware_fail(mdwr, {
-            "query_string": b"authorization=wrong_token_key"
+            "query_string": b"token=wrong_token_key"
         })
 
     async def test_simplejwt_auth_token_middleware(self):
@@ -85,10 +85,10 @@ class DirectMiddlewaresTests(BaseMiddlewaresTests):
     async def test_query_string_simplejwt_auth_token_middleware(self):
         mdwr = QueryStringSimpleJWTAuthTokenMiddleware(MockConsumer())
         await self._test_middleware_success(mdwr, {
-            "query_string": f"authorization={self._simplejwt_token_key}".encode()
+            "query_string": f"token={self._simplejwt_token_key}".encode()
         })
         await self._test_middleware_fail(mdwr, {
-            "query_string": b"authorization=wrong_token_key"
+            "query_string": b"token=wrong_token_key"
         })
 
     async def _test_middleware_success(self, mdwr, scope):
