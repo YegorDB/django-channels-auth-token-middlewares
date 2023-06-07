@@ -62,7 +62,7 @@ class QueryStringDRFAuthTokenMiddleware(
 ):
     """Django REST framework auth token middleware with query string token."""
 
-    query_param = "authorization"
+    query_param = "token"
 
     async def get_user_instance(self, token_key):
         return await self.get_drf_user_instance(token_key)
@@ -126,7 +126,7 @@ class QueryStringSimpleJWTAuthTokenMiddleware(
 ):
     """Simple JWT auth token middleware with query string token."""
 
-    query_param = "authorization"
+    query_param = "token"
 
     def __init__(self, *args, **kwargs):
         self._setup()

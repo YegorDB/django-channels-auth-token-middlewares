@@ -70,11 +70,11 @@ class WebsocketCommunicatorMiddlewaresTests(BaseMiddlewaresTests):
         mdwr = QueryStringDRFAuthTokenMiddleware(TestWebsocketConsumer())
         await self._test_middleware_success(
             mdwr,
-            path=f"/test/?authorization={self._drf_token_key}"
+            path=f"/test/?token={self._drf_token_key}"
         )
         await self._test_middleware_fail(
             mdwr,
-            path="/test/?authorization=wrong_token_key"
+            path="/test/?token=wrong_token_key"
         )
 
     async def test_simplejwt_auth_token_middleware(self):
@@ -90,11 +90,11 @@ class WebsocketCommunicatorMiddlewaresTests(BaseMiddlewaresTests):
         mdwr = QueryStringSimpleJWTAuthTokenMiddleware(TestWebsocketConsumer())
         await self._test_middleware_success(
             mdwr,
-            path=f"/test/?authorization={self._simplejwt_token_key}"
+            path=f"/test/?token={self._simplejwt_token_key}"
         )
         await self._test_middleware_fail(
             mdwr,
-            path="/test/?authorization=wrong_token_key"
+            path="/test/?token=wrong_token_key"
         )
 
     async def _test_middleware_success(self, mdwr, path=None, headers=None):
