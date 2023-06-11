@@ -1,7 +1,7 @@
 # Base middlewares
 
 
-## BaseAuthTokenMiddleware(inner, token_regex=None)
+## BaseAuthTokenMiddleware(inner, token_regex=r".*")
 > Base auth token middleware class.
 
 > Could be used behind other auth middlewares like channels.auth.AuthMiddleware.
@@ -57,6 +57,13 @@
 - token_key - token key as string
 
 
+### async BaseAuthTokenMiddleware.get_scope_header_value(scope, header_name)
+> Returns scope header value by name or None
+
+- scope - channels.auth.AuthMiddleware scope
+- header_name - header name as a string or bytes
+
+
 ## HeaderAuthTokenMiddleware(inner, token_regex=r".*", header_name=None, keyword=None)
 > Base middleware which parses auth token key from request header.
 
@@ -90,7 +97,7 @@
 - token_key - token key as string
 
 
-## CookieAuthTokenMiddleware(inner, token_regex=None, cookie_name=None)
+## CookieAuthTokenMiddleware(inner, token_regex=r".*", cookie_name=None)
 > Base middleware which parses token key from request cookie.
 
 > Subclass of BaseAuthTokenMiddleware.
@@ -116,7 +123,7 @@
 - token_key - token key as string
 
 
-## QueryStringAuthTokenMiddleware(inner, token_regex=None, query_param=None)
+## QueryStringAuthTokenMiddleware(inner, token_regex=r".*", query_param=None)
 > Base middleware which parses token key from request query string.
 
 > Subclass of BaseAuthTokenMiddleware.
