@@ -1,7 +1,11 @@
 # Django REST framework middlewares tutorial
 
 - [DRFAuthTokenMiddleware](#drfauthtokenmiddleware)
+- [QueryStringDRFAuthTokenMiddleware](#querystringdrfauthtokenmiddleware)
+- [DRFAuthTokenMiddlewareStack](#drfauthtokenmiddlewarestack)
 - [SimpleJWTAuthTokenMiddleware](#simplejwtauthtokenmiddleware)
+- [QueryStringSimpleJWTAuthTokenMiddleware](#queryStringsimplejwtauthtokenmiddleware)
+- [SimpleJWTAuthTokenMiddlewareStack](#simplejwtauthtokenmiddlewarestack)
 
 
 ## DRFAuthTokenMiddleware
@@ -100,25 +104,30 @@ application = ProtocolTypeRouter({
 ```
 
 
-## SimpleJWTAuthTokenMiddleware
+## QueryStringDRFAuthTokenMiddleware
 
-> [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/index.html) middleware
+> Django REST framework auth token middleware with query string token
 
 ### Usage example
 
-> SimpleJWTAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
+> Like DRFAuthTokenMiddleware QueryStringDRFAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
 
-Direct usage
+
+## DRFAuthTokenMiddlewareStack
+
+> Combines DRFAuthTokenMiddleware and QueryStringDRFAuthTokenMiddleware
+
+### Usage example
 
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-from channels_auth_token_middlewares.middleware import SimpleJWTAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddlewareStack
 
 
 application = ProtocolTypeRouter({
 
-    "websocket": SimpleJWTAuthTokenMiddleware(
+    "websocket": DRFAuthTokenMiddlewareStack(
         URLRouter([
             # app paths
         ]),
@@ -127,18 +136,17 @@ application = ProtocolTypeRouter({
 })
 ```
 
-With AuthMiddlewareStack
+Same example without stack
 
 ```python
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
 
-from channels_auth_token_middlewares.middleware import SimpleJWTAuthTokenMiddleware
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware, QueryStringDRFAuthTokenMiddleware
 
 
 application = ProtocolTypeRouter({
 
-    "websocket": AuthMiddlewareStack(SimpleJWTAuthTokenMiddleware(
+    "websocket": DRFAuthTokenMiddleware(QueryStringDRFAuthTokenMiddleware(
         URLRouter([
             # app paths
         ]),
@@ -146,3 +154,26 @@ application = ProtocolTypeRouter({
 
 })
 ```
+
+
+## SimpleJWTAuthTokenMiddleware
+
+> [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/index.html) middleware
+
+### Usage example
+
+> Like DRFAuthTokenMiddleware SimpleJWTAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
+
+
+## QueryStringSimpleJWTAuthTokenMiddleware
+
+> Simple JWT auth token middleware with query string token
+
+### Usage example
+
+> Like DRFAuthTokenMiddleware QueryStringSimpleJWTAuthTokenMiddleware could be used directly or behind other auth middlewares or middleware stacks.
+
+
+## SimpleJWTAuthTokenMiddlewareStack
+
+> Like DRFAuthTokenMiddlewareStack but combines SimpleJWTAuthTokenMiddleware and QueryStringSimpleJWTAuthTokenMiddleware
