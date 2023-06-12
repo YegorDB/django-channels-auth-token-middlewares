@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="channels_auth_token_middlewares",
-    version="1.0.1",
+    version="1.1.0",
     description="Django Channels auth token middlewares",
     long_description=long_description,
     long_description_content_type="text/markdown",
