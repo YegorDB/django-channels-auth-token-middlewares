@@ -52,11 +52,20 @@ class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
             return None
         return value.decode()
 
+    # sync version
     @database_sync_to_async
     def get_user_instance(self, token_key):
         User = get_user_model()
         try:
             return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+
+    # async version
+    async def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return await User.objects.aget(id=token_key)
         except User.DoesNotExist:
             return None
 ```
@@ -120,11 +129,20 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
     header_name = "User-Authorization" # may be passed as init kwarg
     keyword = "Id" # may be passed as init kwarg
 
+    # sync version
     @database_sync_to_async
     def get_user_instance(self, token_key):
         User = get_user_model()
         try:
             return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+
+    # async version
+    async def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return await User.objects.aget(id=token_key)
         except User.DoesNotExist:
             return None
 ```
@@ -159,11 +177,20 @@ class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
 
     cookie_name = "user_id" # may be passed as init kwarg
 
+    # sync version
     @database_sync_to_async
     def get_user_instance(self, token_key):
         User = get_user_model()
         try:
             return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+
+    # async version
+    async def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return await User.objects.aget(id=token_key)
         except User.DoesNotExist:
             return None
 ```
@@ -198,11 +225,20 @@ class CustomQueryStringAuthTokenMiddleware(QueryStringAuthTokenMiddleware):
 
     query_param = "user_id" # may be passed as init kwarg
 
+    # sync version
     @database_sync_to_async
     def get_user_instance(self, token_key):
         User = get_user_model()
         try:
             return User.objects.get(id=token_key)
+        except User.DoesNotExist:
+            return None
+
+    # async version
+    async def get_user_instance(self, token_key):
+        User = get_user_model()
+        try:
+            return await User.objects.aget(id=token_key)
         except User.DoesNotExist:
             return None
 ```

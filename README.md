@@ -4,8 +4,7 @@
 
 
 ## Requirements
-- Python>=3.6
-- Channels>=3
+- Channels=4.0
 
 
 ## Install
@@ -32,12 +31,11 @@ INSTALLED_APPS = [
 
 ### Requirements
 - Docker>=19
-- docker-compose>=1.25
 
 ### Usage
 
 #### Run
-`$ docker-compose -f docker-compose.tests.yml up`
+`$ docker compose -f docker-compose.tests.yml up`
 
 #### Clean
-`$ docker-compose -f docker-compose.tests.yml down`
+`$ docker compose -f docker-compose.tests.yml down`
