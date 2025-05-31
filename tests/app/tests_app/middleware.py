@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 
-from channels.db import database_sync_to_async
-
 from channels_auth_token_middlewares.middleware import (
     BaseAuthTokenMiddleware, HeaderAuthTokenMiddleware,
     CookieAuthTokenMiddleware, QueryStringAuthTokenMiddleware,
@@ -10,10 +8,10 @@ from channels_auth_token_middlewares.middleware import (
 
 class UserGetterByIdMixin:
 
-    def get_user_by_id(self, user_id):
+    async def get_user_by_id(self, user_id):
         User = get_user_model()
         try:
-            return User.objects.get(id=user_id)
+            return await User.objects.aget(id=user_id)
         except User.DoesNotExist:
             return None
 
@@ -27,9 +25,8 @@ class TestBaseAuthTokenMiddleware(BaseAuthTokenMiddleware, UserGetterByIdMixin):
             return None
         return value.decode()
 
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        return self.get_user_by_id(token_key)
+    async def get_user_instance(self, token_key):
+        return await self.get_user_by_id(token_key)
 
 
 class TestHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware, UserGetterByIdMixin):
@@ -37,24 +34,21 @@ class TestHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware, UserGetterByIdMix
     header_name = "Test-Authorization"
     keyword = "Id"
 
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        return self.get_user_by_id(token_key)
+    async def get_user_instance(self, token_key):
+        return await self.get_user_by_id(token_key)
 
 
 class TestCookieAuthTokenMiddleware(CookieAuthTokenMiddleware, UserGetterByIdMixin):
 
     cookie_name = "test"
 
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        return self.get_user_by_id(token_key)
+    async def get_user_instance(self, token_key):
+        return await self.get_user_by_id(token_key)
 
 
 class TestQueryStringAuthTokenMiddleware(QueryStringAuthTokenMiddleware, UserGetterByIdMixin):
 
     query_param = "test"
 
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        return self.get_user_by_id(token_key)
+    async def get_user_instance(self, token_key):
+        return await self.get_user_by_id(token_key)

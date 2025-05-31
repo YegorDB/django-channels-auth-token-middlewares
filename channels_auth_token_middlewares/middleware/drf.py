@@ -28,6 +28,7 @@ from .base import HeaderAuthTokenMiddleware, QueryStringAuthTokenMiddleware
 class DRFAuthTokenMiddlewareMixin:
     """Django REST framework auth token middleware mixin."""
 
+    # will be async def since v1.3.0
     @database_sync_to_async
     def get_drf_user_instance(self, token_key):
         Token = apps.get_model("authtoken", "Token")
