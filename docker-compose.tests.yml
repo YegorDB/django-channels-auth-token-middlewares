@@ -9,4 +9,4 @@ services:
       - "./tests/app/:/app/"
       - "./channels_auth_token_middlewares:/new_app/channels_auth_token_middlewares"
       - "./README.md:/new_app/README.md"
-      - "./setup.py:/new_app/setup.py"
+      - "./pyproject.toml:/new_app/pyproject.toml"
