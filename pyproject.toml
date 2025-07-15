@@ -1,0 +1,41 @@
+# Guide:
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+
+# Specification:
+# https://packaging.python.org/en/latest/specifications/pyproject-toml/
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "channels_auth_token_middlewares"
+version = "1.3.0"
+dependencies = ["channels>=4.0.0", "channels<4.1.0"]
+requires-python = ">=3.7"
+authors = [
+  { name="Yegor Bitensky", email="yegorbitensky@gmail.com" },
+]
+description = "Django Channels auth token middlewares"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = ["django", "channels", "middleware"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/YegorDB/django-channels-auth-token-middlewares"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["docs", "tests", "tutorial", ".gitignore", "docker-compose.tests.yml"]
