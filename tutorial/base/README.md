@@ -31,8 +31,6 @@
 ```python
 from django.contrib.auth import get_user_model
 
-from channels.db import database_sync_to_async
-
 from channels_auth_token_middlewares.middleware import BaseAuthTokenMiddleware
 
 
@@ -52,16 +50,6 @@ class CustomAuthTokenMiddleware(BaseAuthTokenMiddleware):
             return None
         return value.decode()
 
-    # sync version
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        User = get_user_model()
-        try:
-            return User.objects.get(id=token_key)
-        except User.DoesNotExist:
-            return None
-
-    # async version
     async def get_user_instance(self, token_key):
         User = get_user_model()
         try:
@@ -114,8 +102,6 @@ class CustomAuthTokenMiddleware3(CustomAuthTokenMiddleware2):
 ```python
 from django.contrib.auth import get_user_model
 
-from channels.db import database_sync_to_async
-
 from channels_auth_token_middlewares.middleware import HeaderAuthTokenMiddleware
 
 
@@ -129,16 +115,6 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
     header_name = "User-Authorization" # may be passed as init kwarg
     keyword = "Id" # may be passed as init kwarg
 
-    # sync version
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        User = get_user_model()
-        try:
-            return User.objects.get(id=token_key)
-        except User.DoesNotExist:
-            return None
-
-    # async version
     async def get_user_instance(self, token_key):
         User = get_user_model()
         try:
@@ -163,8 +139,6 @@ class CustomHeaderAuthTokenMiddleware(HeaderAuthTokenMiddleware):
 ```python
 from django.contrib.auth import get_user_model
 
-from channels.db import database_sync_to_async
-
 from channels_auth_token_middlewares.middleware import CookieAuthTokenMiddleware
 
 
@@ -177,16 +151,6 @@ class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
 
     cookie_name = "user_id" # may be passed as init kwarg
 
-    # sync version
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        User = get_user_model()
-        try:
-            return User.objects.get(id=token_key)
-        except User.DoesNotExist:
-            return None
-
-    # async version
     async def get_user_instance(self, token_key):
         User = get_user_model()
         try:
@@ -211,8 +175,6 @@ class CustomCookieAuthTokenMiddleware(CookieAuthTokenMiddleware):
 ```python
 from django.contrib.auth import get_user_model
 
-from channels.db import database_sync_to_async
-
 from channels_auth_token_middlewares.middleware import QueryStringAuthTokenMiddleware
 
 
@@ -225,16 +187,6 @@ class CustomQueryStringAuthTokenMiddleware(QueryStringAuthTokenMiddleware):
 
     query_param = "user_id" # may be passed as init kwarg
 
-    # sync version
-    @database_sync_to_async
-    def get_user_instance(self, token_key):
-        User = get_user_model()
-        try:
-            return User.objects.get(id=token_key)
-        except User.DoesNotExist:
-            return None
-
-    # async version
     async def get_user_instance(self, token_key):
         User = get_user_model()
         try:

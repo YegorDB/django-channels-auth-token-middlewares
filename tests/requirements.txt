@@ -1,4 +1,4 @@
-channels[daphne]==4.0.0
-Django==4.1.13
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.2.2
+channels[daphne]==4.3.2
+Django==5.2.9
+djangorestframework==3.16.1
+djangorestframework-simplejwt==5.5.1
