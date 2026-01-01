@@ -1,4 +1,4 @@
-FROM python:3.10.17
+FROM python:3.14.2
 
 ADD ./requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip --root-user-action ignore && \

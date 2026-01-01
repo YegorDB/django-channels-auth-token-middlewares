@@ -28,12 +28,10 @@ from .base import HeaderAuthTokenMiddleware, QueryStringAuthTokenMiddleware
 class DRFAuthTokenMiddlewareMixin:
     """Django REST framework auth token middleware mixin."""
 
-    # will be async def since v1.3.0
-    @database_sync_to_async
-    def get_drf_user_instance(self, token_key):
+    async def get_drf_user_instance(self, token_key):
         Token = apps.get_model("authtoken", "Token")
         try:
-            token = Token.objects.select_related("user").get(key=token_key)
+            token = await Token.objects.select_related("user").aget(key=token_key)
         except Token.DoesNotExist:
             return None
         return token.user
