@@ -4,7 +4,7 @@
 
 
 ## Requirements
-- Channels=4.0
+- Channels>=4.1
 
 
 ## Install
